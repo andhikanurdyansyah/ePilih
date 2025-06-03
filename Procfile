@@ -1,1 +1,1 @@
-web: gunicorn ePilih.wsgi:application
+web: gunicorn evoting.wsgi.application
