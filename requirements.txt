@@ -31,3 +31,5 @@ zipp==3.11.0
 zope.interface==5.5.2
 gunicorn
 psycopg2-binary
+dj-database-url
+whitenoise
