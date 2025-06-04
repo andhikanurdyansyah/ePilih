@@ -5,11 +5,11 @@ ALLOWED_HOSTS = ['*']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nama database',
-        'USER': 'username database', 
-        'PASSWORD': 'password database',
-        'PORT': 3306,
-        'HOST': 'localhost'
+        'NAME': 'railway',
+        'USER': 'postgres', 
+        'PASSWORD': 'PhIdtlVyrJSBYtqYnRLrBznzppdWpKdI',
+        'PORT': 5432,
+        'HOST': 'postgres.railway.internal'
     }
 }
 
