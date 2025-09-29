@@ -84,11 +84,24 @@ def get_database_config():
     
     # Final fallback to custom environment variables
     print("Using custom environment variables for database config")
+    
+    # Try to get the actual PostgreSQL host from Railway
+    db_host = os.environ.get('DB_HOST', 'localhost')
+    
+    # If still localhost, warn about potential connection issue
+    if db_host == 'localhost':
+        print("⚠️ WARNING: DB_HOST is 'localhost' - this won't work on Railway!")
+        print("💡 Please connect PostgreSQL service or update DB_HOST variable")
+    
     return {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'epilih'),
         'USER': os.environ.get('DB_USER', 'epilihuser'),  
         'PASSWORD': os.environ.get('DB_PASS', 'epilihpass'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'HOST': db_host,
         'PORT': os.environ.get('DB_PORT', '5432'),
+        'OPTIONS': {
+            'connect_timeout': 60,
+            'sslmode': 'prefer',
+        } if db_host != 'localhost' else {}
     }
