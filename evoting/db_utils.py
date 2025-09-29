@@ -53,17 +53,15 @@ def get_database_config():
         print("Using Railway DATABASE_URL")
         config = parse_database_url(database_url, conn_max_age=600, conn_health_checks=True)
         if config:
-            return {'default': config}
+            return config
     
     # Fallback to environment variables
     print("Using environment variables for database config")
     return {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME', 'epilih'),
-            'USER': os.environ.get('DB_USER', 'epilihuser'),
-            'PASSWORD': os.environ.get('DB_PASS', 'epilihpass'),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
-        }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'epilih'),
+        'USER': os.environ.get('DB_USER', 'epilihuser'),
+        'PASSWORD': os.environ.get('DB_PASS', 'epilihpass'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
