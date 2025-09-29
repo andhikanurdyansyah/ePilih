@@ -1,121 +1,17 @@
 $(document).ready(function () {
-    // Initialize Swiper with autoplay
     var swiper = new Swiper(".mySwiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "auto",
-        loop: true,
-        speed: 800,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-            waitForTransition: false,
-        },
         coverflowEffect: {
           rotate: 20,
           stretch: 0,
           depth: 100,
           modifier: 1,
           slideShadows: true
-        },
-        // Navigation arrows (optional)
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        // Pagination dots (optional)
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        // Smooth transitions
-        watchSlidesProgress: true,
-        watchSlidesVisibility: true,
-        // Breakpoints for responsive
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-            },
-            768: {
-                slidesPerView: 2,
-            },
-            1024: {
-                slidesPerView: "auto",
-            },
-        },
-    });
-
-    // Debug and handle autoplay
-    console.log('Swiper initialized:', swiper);
-    
-    // Try to start autoplay after page load
-    setTimeout(function() {
-        if (swiper.autoplay) {
-            swiper.autoplay.start();
-            console.log('Swiper autoplay started');
-        }
-    }, 1000);
-    
-    // Start autoplay on first user interaction (for browsers that block autoplay)
-    var autoplayStarted = false;
-    $(document).one('click touchstart', function() {
-        if (!autoplayStarted && swiper.autoplay) {
-            swiper.autoplay.start();
-            autoplayStarted = true;
-            console.log('Swiper autoplay started after user interaction');
         }
     });
-    
-    // Also try to start on swiper click
-    $('.mySwiper').one('click', function() {
-        if (!autoplayStarted && swiper.autoplay) {
-            swiper.autoplay.start();
-            autoplayStarted = true;
-            console.log('Swiper autoplay started on swiper click');
-        }
-    });
-
-    // Manual controls
-    $('.swiper-button-next').on('click', function() {
-        swiper.slideNext();
-    });
-    
-    $('.swiper-button-prev').on('click', function() {
-        swiper.slidePrev();
-    });
-    
-    // Fallback: Manual autoplay with setInterval if native autoplay fails
-    var manualAutoplay;
-    setTimeout(function() {
-        if (!swiper.autoplay.running) {
-            console.log('Native autoplay not running, starting manual autoplay');
-            manualAutoplay = setInterval(function() {
-                if (swiper && !document.querySelector('.mySwiper:hover')) {
-                    swiper.slideNext();
-                }
-            }, 3000);
-        }
-    }, 2000);
-    
-    // Stop manual autoplay when hovering
-    $('.mySwiper').hover(
-        function() {
-            if (manualAutoplay) {
-                clearInterval(manualAutoplay);
-            }
-        },
-        function() {
-            if (manualAutoplay && !swiper.autoplay.running) {
-                manualAutoplay = setInterval(function() {
-                    if (swiper && !document.querySelector('.mySwiper:hover')) {
-                        swiper.slideNext();
-                    }
-                }, 3000);
-            }
-        }
-    );
 
     $('.right-bar-toggle').on('click', function (e) {
         let name = $(this).attr('name'),

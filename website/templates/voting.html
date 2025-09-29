@@ -4,55 +4,6 @@
 {% block css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
 <link rel="stylesheet" href="{% static 'assets/css/candidate.css' %}" />
-<style>
-/* Custom Swiper Styling */
-.mySwiper {
-    position: relative;
-    padding-bottom: 50px; /* Space for pagination */
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-    background: rgba(109, 3, 254, 0.1);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    margin-top: -22px;
-    transition: all 0.3s ease;
-}
-
-.swiper-button-next:hover,
-.swiper-button-prev:hover {
-    background: rgba(109, 3, 254, 0.2);
-    transform: scale(1.1);
-}
-
-.swiper-button-next:after,
-.swiper-button-prev:after {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.swiper-pagination-bullet {
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 1;
-    transition: all 0.3s ease;
-}
-
-.swiper-pagination-bullet-active {
-    background: #6D03FE;
-    transform: scale(1.2);
-}
-
-/* Smooth fade transition for slides */
-.swiper-slide {
-    transition: opacity 0.3s ease;
-}
-
-.swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next):not(.swiper-slide-prev) {
-    opacity: 0.7;
-}
-</style>
 {% endblock css %}
 
 {% block title %}
@@ -108,13 +59,6 @@
                             </div>
                             {% endfor %}
                         </div>
-                        
-                        <!-- Optional: Navigation arrows -->
-                        <div class="swiper-button-next" style="color: #6D03FE; right: 10px;"></div>
-                        <div class="swiper-button-prev" style="color: #6D03FE; left: 10px;"></div>
-                        
-                        <!-- Optional: Pagination dots -->
-                        <div class="swiper-pagination" style="bottom: 10px;"></div>
                     </div>
                 </div>
             </div>
