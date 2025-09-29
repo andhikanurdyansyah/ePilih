@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: epilih-db
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    container_name: epilih-adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: .
+    container_name: epilih-web
+    command: >
+      sh -c "
+        echo 'Menunggu database siap...' &&
+        apk add --no-cache netcat-openbsd &&
+        while ! nc -z db 5432; do sleep 1; done &&
+        echo 'Database siap, migrasi...' &&
+        python manage.py migrate &&
+        echo 'Menjalankan server...' &&
+        gunicorn website.wsgi:application --bind 0.0.0.0:8000
+      "
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    working_dir: /app
+
+volumes:
+  postgres_data:
