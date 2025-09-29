@@ -24,7 +24,7 @@ $(document).ready(function () {
         data.append("org", e.target.org.value)
         data.append("start", e.target.start.value)
         data.append("end", e.target.end.value)
-        data.append("logo", e.target.foto.files[0])
+        data.append("foto", e.target.foto.files[0])
 
         if (data.get('name') && data.get('org')) {
             $('.btn-simpan').children('span.spinner-border').removeClass('d-none')

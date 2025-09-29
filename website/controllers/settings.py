@@ -28,7 +28,10 @@ def update(request):
             org = request.POST.get('org')
             start = request.POST.get('start')
             end = request.POST.get('end')
-            logo = request.FILES.get('logo')
+            logo = request.FILES.get('foto')
+            
+            print(f"DEBUG - Files received: {list(request.FILES.keys())}")
+            print(f"DEBUG - Logo file: {logo}")
             
             if name and org:
                 try:
@@ -37,6 +40,7 @@ def update(request):
                     settings.organization = org
                     
                     if logo:
+                        print(f"DEBUG - Saving logo: {logo.name}, size: {logo.size}")
                         settings.app_logo = logo
                     if start:
                         settings.start_at = start
@@ -44,9 +48,11 @@ def update(request):
                         settings.end_at = end
                     settings.save()
                     
+                    print(f"DEBUG - App logo after save: {settings.app_logo}")
                     result['status'] = True
-                except:
-                    result['message'] = "Ubah pengaturan gagal, coba lagi!"
+                except Exception as e:
+                    print(f"DEBUG - Error saving: {e}")
+                    result['message'] = f"Ubah pengaturan gagal: {str(e)}"
             else:
                 result['message'] = "Ada form yang masih kosong!"
                     
