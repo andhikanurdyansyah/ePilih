@@ -82,28 +82,24 @@ WSGI_APPLICATION = 'evoting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# Database configuration
+# Database configuration - Railway Priority
 if 'DATABASE_URL' in os.environ:
-    # Railway PostgreSQL Database Configuration
+    # Railway PostgreSQL Database Configuration (Production)
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.parse(
+            os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-elif DEBUG:
-    # Development database (dari dev.py)
-    try:
-        from .dev import DATABASES
-    except ImportError:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-else:
-    # Production database (dari prod.py)
+    print("Using Railway DATABASE_URL")
+elif not DEBUG:
+    # Production fallback - try prod.py first
     try:
         from .prod import DATABASES
+        print("Using prod.py database config")
     except ImportError:
+        # Final fallback for production
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
@@ -114,6 +110,20 @@ else:
                 'PORT': os.environ.get('DB_PORT', '5432'),
             }
         }
+        print("Using environment variables database config")
+else:
+    # Development database
+    try:
+        from .dev import DATABASES
+        print("Using dev.py database config")
+    except ImportError:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        print("Using SQLite development database")
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

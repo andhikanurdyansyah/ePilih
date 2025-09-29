@@ -9,11 +9,19 @@ echo "PYTHONPATH: $PYTHONPATH"
 echo "DJANGO_SETTINGS_MODULE: $DJANGO_SETTINGS_MODULE"
 
 # Show environment variables (without sensitive data)
+echo "=== Environment Variables Check ==="
 if [ -n "$DATABASE_URL" ]; then
-    echo "DATABASE_URL: Available ($(echo $DATABASE_URL | cut -c1-20)...)"
+    echo "✓ DATABASE_URL: Available ($(echo $DATABASE_URL | cut -c1-25)...)"
 else
-    echo "DATABASE_URL: Not found"
+    echo "✗ DATABASE_URL: Not found"
 fi
+
+echo "DEBUG: $DEBUG"
+echo "SECRET_KEY: $(echo ${SECRET_KEY:-"Not set"} | cut -c1-10)..."
+
+# Show Railway-specific variables
+echo "RAILWAY_ENVIRONMENT: ${RAILWAY_ENVIRONMENT:-"Not set"}"
+echo "PORT: $PORT"
 
 # Test Django configuration
 echo "=== Testing Django Configuration ==="
@@ -23,14 +31,23 @@ sys.path.insert(0, '/app')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'evoting.settings')
 try:
     import django
+    from django.conf import settings
     django.setup()
-    print('✓ Django configuration OK')
+    print('✓ Django configuration loaded')
+    
+    # Show database configuration
+    db_config = settings.DATABASES['default']
+    print(f'Database ENGINE: {db_config.get(\"ENGINE\", \"Not set\")}')
+    print(f'Database NAME: {db_config.get(\"NAME\", \"Not set\")}')
+    print(f'Database HOST: {db_config.get(\"HOST\", \"Not set\")}')
+    print(f'Database PORT: {db_config.get(\"PORT\", \"Not set\")}')
     
     # Test database connection
     from django.db import connection
     with connection.cursor() as cursor:
         cursor.execute('SELECT 1')
-        print('✓ Database connection OK')
+        result = cursor.fetchone()
+        print(f'✓ Database connection OK - Test result: {result}')
         
 except Exception as e:
     print(f'✗ Django/Database error: {e}')
