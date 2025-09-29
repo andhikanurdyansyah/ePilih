@@ -41,7 +41,11 @@
                 <!-- LOGO -->
                 <a href="{% url 'dashboard' %}" class="navbar-brand mr-0 mr-md-2 logo">
                     <span class="logo-lg d-flex align-items-center">
-                        <img src="/media/{{ app.app_logo }}" alt="" height="30" />
+                        {% if app.app_logo %}
+                            <img src="/media/{{ app.app_logo }}" alt="" height="30" />
+                        {% else %}
+                            <img src="{% static 'assets/images/template-logo.jpg' %}" alt="" height="30" />
+                        {% endif %}
                         <span class="d-inline h3 ml-1 text-logo text-capitalize">{{ app.app_name }}</span>
                     </span>
                 </a>

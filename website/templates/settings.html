@@ -23,7 +23,11 @@ Pengaturan
                             <div class="col-md-3">
                                 <div class="form-group text-center">
                                     <div class="position-relative d-inline-block">
-                                        <img src="/media/{{ app.app_logo }}" alt="logo app" width="100%" id="logoApp" class="rounded">
+                                        {% if app.app_logo %}
+                                            <img src="/media/{{ app.app_logo }}" alt="logo app" width="100%" id="logoApp" class="rounded">
+                                        {% else %}
+                                            <img src="{% static 'assets/images/template-logo.jpg' %}" alt="logo app" width="100%" id="logoApp" class="rounded">
+                                        {% endif %}
                                         <label for="logo" class="btn btn-success btn-sm mb-0" style="cursor: pointer; bottom: 0; right: 0; position: absolute">
                                             <span><i class="uil-image-edit"></i></span>
                                             <input type="file" hidden name="foto" id="logo" accept="image/png, image/jpeg" required>
