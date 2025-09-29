@@ -31,7 +31,15 @@ Data Kandidat
                         {% for c in candidates %}
                         <div class="col-md-2 mb-3 col-6">
                             <div class="position-relative candidate-card rounded" data-code="{{ c.code }}">
-                                <img class="card-img-top img-fluid rounded" src="/media/{{ c.photo }}" alt="Candidate photos">
+                                {% if c.photo_base64 %}
+                                    <img class="card-img-top img-fluid rounded" src="{{ c.photo_base64 }}" alt="Candidate photos"
+                                         onerror="this.src='{% if c.photo %}/media/{{ c.photo }}{% else %}{% static 'assets/images/template-foto.jpg' %}{% endif %}'">
+                                {% elif c.photo %}
+                                    <img class="card-img-top img-fluid rounded" src="/media/{{ c.photo }}" alt="Candidate photos"
+                                         onerror="this.src='{% static 'assets/images/template-foto.jpg' %}'">
+                                {% else %}
+                                    <img class="card-img-top img-fluid rounded" src="{% static 'assets/images/template-foto.jpg' %}" alt="Candidate photos">
+                                {% endif %}
                                 <div class="overlay rounded">
                                     <div class="bg-primary rounded order text-white"><span>{{ c.order }}</span></div>
                                     <h1 class="text-white text-uppercase">{{ c.name }}<br>{{ c.division }}</h1>

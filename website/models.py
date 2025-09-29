@@ -84,6 +84,7 @@ class Candidate(models.Model):
     name = models.CharField(max_length=255)
     order = models.IntegerField()
     photo = models.ImageField(upload_to="photos")
+    photo_base64 = models.TextField(blank=True, null=True, help_text="Base64 encoded photo for Railway compatibility")
     division = models.ForeignKey(Division, on_delete=models.CASCADE, null=True)
     vision = models.TextField()
     mission = models.TextField()

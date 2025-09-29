@@ -37,10 +37,19 @@
                             {% for c in candidates %}
                             <div class="swiper-slide">
                                 <div class="position-relative candidate-card rounded-xl right-bar-toggle border"
-                                    code="{{ c.code }}" name="{{ c.name }}" foto="/media/{{ c.photo }}"
+                                    code="{{ c.code }}" name="{{ c.name }}" 
+                                    foto="{% if c.photo_base64 %}{{ c.photo_base64 }}{% elif c.photo %}/media/{{ c.photo }}{% else %}{% static 'assets/images/template-foto.jpg' %}{% endif %}"
                                     order="{{ c.order }}" vision="{{ c.vision }}" mission="{{ c.mission }}"
                                     division="{{ c.division }}">
-                                    <img class="img-fluid rounded-xl" src="/media/{{ c.photo }}" alt="Candidate photos">
+                                    {% if c.photo_base64 %}
+                                        <img class="img-fluid rounded-xl" src="{{ c.photo_base64 }}" alt="Candidate photos"
+                                             onerror="this.src='{% if c.photo %}/media/{{ c.photo }}{% else %}{% static 'assets/images/template-foto.jpg' %}{% endif %}'">
+                                    {% elif c.photo %}
+                                        <img class="img-fluid rounded-xl" src="/media/{{ c.photo }}" alt="Candidate photos"
+                                             onerror="this.src='{% static 'assets/images/template-foto.jpg' %}'">
+                                    {% else %}
+                                        <img class="img-fluid rounded-xl" src="{% static 'assets/images/template-foto.jpg' %}" alt="Candidate photos">
+                                    {% endif %}
                                     <div class="overlay rounded-xl">
                                         <div class="bg-white rounded-xl order text-ungu"><span>{{ c.order }}</span>
                                         </div>
