@@ -41,15 +41,25 @@ def update(request):
                     
                     if logo:
                         print(f"DEBUG - Saving logo: {logo.name}, size: {logo.size}")
-                        settings.app_logo = logo
                         
-                        # Also save as base64 for Railway compatibility
+                        # Save as base64 for Railway compatibility
                         import base64
+                        import os
+                        
                         logo_content = logo.read()
                         logo_base64 = base64.b64encode(logo_content).decode('utf-8')
                         logo_mime = logo.content_type or 'image/jpeg'
                         settings.app_logo_base64 = f"data:{logo_mime};base64,{logo_base64}"
                         print(f"DEBUG - Logo base64 saved, length: {len(settings.app_logo_base64)}")
+                        
+                        # Try to save file too, but don't fail if it doesn't work
+                        try:
+                            settings.app_logo = logo
+                            print(f"DEBUG - Logo file saved successfully")
+                        except Exception as e:
+                            print(f"DEBUG - Logo file save failed (using base64 instead): {e}")
+                            # Reset file field since file save failed
+                            settings.app_logo = None
                     if start:
                         settings.start_at = start
                     if end:

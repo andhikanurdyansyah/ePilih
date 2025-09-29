@@ -50,12 +50,19 @@ INSTALLED_APPS = [
     'website.apps.WebsiteConfig',
 ]
 
-# Add cloudinary if available
-try:
-    import cloudinary
-    INSTALLED_APPS.extend(['cloudinary_storage', 'cloudinary'])
-except ImportError:
-    pass
+# Add cloudinary only if properly configured
+CLOUDINARY_CONFIGURED = all([
+    os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    os.environ.get('CLOUDINARY_API_KEY'), 
+    os.environ.get('CLOUDINARY_API_SECRET')
+])
+
+if CLOUDINARY_CONFIGURED:
+    try:
+        import cloudinary
+        INSTALLED_APPS.extend(['cloudinary_storage', 'cloudinary'])
+    except ImportError:
+        pass
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -167,8 +174,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # Media files configuration
 RAILWAY_ENVIRONMENT = os.environ.get('RAILWAY_ENVIRONMENT')
 
-# Try to configure Cloudinary if available (for production)
-if RAILWAY_ENVIRONMENT == 'production':
+# Try to configure Cloudinary only if credentials are available
+if RAILWAY_ENVIRONMENT == 'production' and CLOUDINARY_CONFIGURED:
     try:
         import cloudinary
         import cloudinary.uploader
@@ -176,23 +183,29 @@ if RAILWAY_ENVIRONMENT == 'production':
         
         # Production: Use Cloudinary for media files
         cloudinary.config(
-            cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'your-cloud-name'),
-            api_key=os.environ.get('CLOUDINARY_API_KEY', 'your-api-key'),
-            api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'your-api-secret'),
+            cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+            api_key=os.environ.get('CLOUDINARY_API_KEY'),
+            api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
             secure=True
         )
         
         # Use Cloudinary for media files
         DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
         MEDIA_URL = '/media/'
+        print("✓ Cloudinary configured for media storage")
     except ImportError:
         # Cloudinary not installed, use local storage with base64 fallback
         MEDIA_URL = '/media/'
         MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+        print("✓ Using local storage with base64 fallback (Cloudinary not available)")
 else:
-    # Development: Use local file storage
+    # Development or Cloudinary not configured: Use local file storage with base64 fallback
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    if RAILWAY_ENVIRONMENT == 'production':
+        print("✓ Using base64 storage for Railway (Cloudinary not configured)")
+    else:
+        print("✓ Using local storage for development")
 
 
 
