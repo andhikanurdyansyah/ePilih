@@ -89,7 +89,10 @@ WSGI_APPLICATION = 'evoting.wsgi.application'
 print("=== Database Configuration Debug ===")
 
 # Use our custom database configuration function
-DATABASES = get_database_config()
+db_config = get_database_config()
+DATABASES = {
+    'default': db_config
+}
 
 print(f"Database ENGINE: {DATABASES['default']['ENGINE']}")
 print(f"Database NAME: {DATABASES['default']['NAME']}")
