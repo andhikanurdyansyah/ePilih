@@ -47,17 +47,37 @@ $(document).ready(function () {
         },
     });
 
-    // Debug and force start autoplay
+    // Debug and handle autoplay
     console.log('Swiper initialized:', swiper);
-    console.log('Autoplay config:', swiper.autoplay);
     
+    // Try to start autoplay after page load
     setTimeout(function() {
-        swiper.autoplay.start();
-        console.log('Swiper autoplay started manually');
-        console.log('Autoplay running:', swiper.autoplay.running);
+        if (swiper.autoplay) {
+            swiper.autoplay.start();
+            console.log('Swiper autoplay started');
+        }
     }, 1000);
+    
+    // Start autoplay on first user interaction (for browsers that block autoplay)
+    var autoplayStarted = false;
+    $(document).one('click touchstart', function() {
+        if (!autoplayStarted && swiper.autoplay) {
+            swiper.autoplay.start();
+            autoplayStarted = true;
+            console.log('Swiper autoplay started after user interaction');
+        }
+    });
+    
+    // Also try to start on swiper click
+    $('.mySwiper').one('click', function() {
+        if (!autoplayStarted && swiper.autoplay) {
+            swiper.autoplay.start();
+            autoplayStarted = true;
+            console.log('Swiper autoplay started on swiper click');
+        }
+    });
 
-    // Manual controls to test
+    // Manual controls
     $('.swiper-button-next').on('click', function() {
         swiper.slideNext();
     });
@@ -65,6 +85,37 @@ $(document).ready(function () {
     $('.swiper-button-prev').on('click', function() {
         swiper.slidePrev();
     });
+    
+    // Fallback: Manual autoplay with setInterval if native autoplay fails
+    var manualAutoplay;
+    setTimeout(function() {
+        if (!swiper.autoplay.running) {
+            console.log('Native autoplay not running, starting manual autoplay');
+            manualAutoplay = setInterval(function() {
+                if (swiper && !document.querySelector('.mySwiper:hover')) {
+                    swiper.slideNext();
+                }
+            }, 3000);
+        }
+    }, 2000);
+    
+    // Stop manual autoplay when hovering
+    $('.mySwiper').hover(
+        function() {
+            if (manualAutoplay) {
+                clearInterval(manualAutoplay);
+            }
+        },
+        function() {
+            if (manualAutoplay && !swiper.autoplay.running) {
+                manualAutoplay = setInterval(function() {
+                    if (swiper && !document.querySelector('.mySwiper:hover')) {
+                        swiper.slideNext();
+                    }
+                }, 3000);
+            }
+        }
+    );
 
     $('.right-bar-toggle').on('click', function (e) {
         let name = $(this).attr('name'),
