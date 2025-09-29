@@ -11,7 +11,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="/media/{{ app.app_logo }}" />
+    {% if app.app_logo_base64 %}
+        <link rel="shortcut icon" href="{{ app.app_logo_base64 }}" />
+    {% elif app.app_logo %}
+        <link rel="shortcut icon" href="/media/{{ app.app_logo }}" />
+    {% else %}
+        <link rel="shortcut icon" href="{% static 'assets/images/template-logo.jpg' %}" />
+    {% endif %}
 
     {% block plugin %}{% endblock plugin %}
 
@@ -41,8 +47,11 @@
                 <!-- LOGO -->
                 <a href="{% url 'dashboard' %}" class="navbar-brand mr-0 mr-md-2 logo">
                     <span class="logo-lg d-flex align-items-center">
-                        {% if app.app_logo %}
-                            <img src="/media/{{ app.app_logo }}" alt="" height="30" />
+                        {% if app.app_logo_base64 %}
+                            <img src="{{ app.app_logo_base64 }}" alt="" height="30" />
+                        {% elif app.app_logo %}
+                            <img src="/media/{{ app.app_logo }}" alt="" height="30" 
+                                 onerror="this.src='{% static 'assets/images/template-logo.jpg' %}'"/>
                         {% else %}
                             <img src="{% static 'assets/images/template-logo.jpg' %}" alt="" height="30" />
                         {% endif %}

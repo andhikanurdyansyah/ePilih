@@ -50,6 +50,13 @@ INSTALLED_APPS = [
     'website.apps.WebsiteConfig',
 ]
 
+# Add cloudinary if available
+try:
+    import cloudinary
+    INSTALLED_APPS.extend(['cloudinary_storage', 'cloudinary'])
+except ImportError:
+    pass
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Untuk serving static files
@@ -157,8 +164,35 @@ STATICFILES_DIRS = [
 # WhiteNoise static files compression - use ManifestStaticFilesStorage for better compatibility
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Media files configuration
+RAILWAY_ENVIRONMENT = os.environ.get('RAILWAY_ENVIRONMENT')
+
+# Try to configure Cloudinary if available (for production)
+if RAILWAY_ENVIRONMENT == 'production':
+    try:
+        import cloudinary
+        import cloudinary.uploader
+        import cloudinary.api
+        
+        # Production: Use Cloudinary for media files
+        cloudinary.config(
+            cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'your-cloud-name'),
+            api_key=os.environ.get('CLOUDINARY_API_KEY', 'your-api-key'),
+            api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'your-api-secret'),
+            secure=True
+        )
+        
+        # Use Cloudinary for media files
+        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+        MEDIA_URL = '/media/'
+    except ImportError:
+        # Cloudinary not installed, use local storage with base64 fallback
+        MEDIA_URL = '/media/'
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    # Development: Use local file storage
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 

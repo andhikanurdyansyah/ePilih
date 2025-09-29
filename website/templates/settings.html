@@ -23,8 +23,11 @@ Pengaturan
                             <div class="col-md-3">
                                 <div class="form-group text-center">
                                     <div class="position-relative d-inline-block">
-                                        {% if app.app_logo %}
-                                            <img src="/media/{{ app.app_logo }}" alt="logo app" width="100%" id="logoApp" class="rounded">
+                                        {% if app.app_logo_base64 %}
+                                            <img src="{{ app.app_logo_base64 }}" alt="logo app" width="100%" id="logoApp" class="rounded">
+                                        {% elif app.app_logo %}
+                                            <img src="/media/{{ app.app_logo }}" alt="logo app" width="100%" id="logoApp" class="rounded" 
+                                                 onerror="this.src='{% static 'assets/images/template-logo.jpg' %}'">
                                         {% else %}
                                             <img src="{% static 'assets/images/template-logo.jpg' %}" alt="logo app" width="100%" id="logoApp" class="rounded">
                                         {% endif %}

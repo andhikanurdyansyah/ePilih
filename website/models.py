@@ -41,6 +41,7 @@ class App(models.Model):
     app_name = models.CharField(max_length=255)
     organization = models.CharField(max_length=255)
     app_logo = models.ImageField(upload_to="logo")
+    app_logo_base64 = models.TextField(null=True, blank=True)  # Store logo as base64 for Railway
     start_at = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     end_at = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     
