@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Initialize Swiper with autoplay
     var swiper = new Swiper(".mySwiper", {
         effect: "coverflow",
         grabCursor: true,
@@ -10,6 +11,7 @@ $(document).ready(function () {
             delay: 3000,
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
+            waitForTransition: false,
         },
         coverflowEffect: {
           rotate: 20,
@@ -31,6 +33,37 @@ $(document).ready(function () {
         // Smooth transitions
         watchSlidesProgress: true,
         watchSlidesVisibility: true,
+        // Breakpoints for responsive
+        breakpoints: {
+            640: {
+                slidesPerView: 1,
+            },
+            768: {
+                slidesPerView: 2,
+            },
+            1024: {
+                slidesPerView: "auto",
+            },
+        },
+    });
+
+    // Debug and force start autoplay
+    console.log('Swiper initialized:', swiper);
+    console.log('Autoplay config:', swiper.autoplay);
+    
+    setTimeout(function() {
+        swiper.autoplay.start();
+        console.log('Swiper autoplay started manually');
+        console.log('Autoplay running:', swiper.autoplay.running);
+    }, 1000);
+
+    // Manual controls to test
+    $('.swiper-button-next').on('click', function() {
+        swiper.slideNext();
+    });
+    
+    $('.swiper-button-prev').on('click', function() {
+        swiper.slidePrev();
     });
 
     $('.right-bar-toggle').on('click', function (e) {
