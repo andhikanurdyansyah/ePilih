@@ -1,27 +1,33 @@
 #!/bin/sh
 
-echo "Menunggu database siap..."
+# Set default PORT if not provided
+export PORT=${PORT:-8000}
 
-# Tunggu PostgreSQL siap (tanpa netcat)
-until python -c "
-import socket
-import time
-s = socket.socket()
-while True:
-    try:
-        s.connect(('$DB_HOST', 5432))
-        break
-    except socket.error:
-        time.sleep(1)
-"; do
-  echo "Menunggu koneksi ke PostgreSQL di $DB_HOST:5432..."
-  sleep 1
-done
+echo "Starting Railway deployment..."
+echo "PORT: $PORT"
 
-echo "Database siap, menjalankan migrasi..."
+# Jika menggunakan Railway, DATABASE_URL akan tersedia
+if [ -n "$DATABASE_URL" ]; then
+    echo "Railway PostgreSQL detected"
+else
+    echo "No DATABASE_URL found - using fallback configuration"
+fi
 
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput
+echo "Running database migrations..."
+python manage.py migrate --noinput || {
+    echo "Migration failed, but continuing..."
+}
 
-echo "Menjalankan server gunicorn..."
-exec gunicorn evoting.wsgi:application --bind 0.0.0.0:8000
+echo "Collecting static files..."
+python manage.py collectstatic --noinput || {
+    echo "Static collection failed, but continuing..."
+}
+
+echo "Starting Gunicorn server on port $PORT..."
+exec gunicorn evoting.wsgi:application \
+    --bind 0.0.0.0:$PORT \
+    --workers 2 \
+    --timeout 120 \
+    --keep-alive 5 \
+    --access-logfile - \
+    --error-logfile -

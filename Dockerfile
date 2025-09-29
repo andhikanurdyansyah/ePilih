@@ -30,11 +30,12 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy project files
 COPY . .
 
-# Create staticfiles directory
-RUN mkdir -p staticfiles
+# Create staticfiles directory and set permissions
+RUN mkdir -p staticfiles media && \
+    chmod +x entrypoint.sh
 
 # Expose port 
 EXPOSE $PORT
 
-# Jalankan migrate dan collectstatic saat container dijalankan
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn evoting.wsgi:application --host 0.0.0.0 --port ${PORT:-8000}"]
+# Use entrypoint script
+CMD ["sh", "entrypoint.sh"]
