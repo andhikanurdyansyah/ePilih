@@ -1,6 +1,11 @@
 from django.urls import path
+from django.shortcuts import redirect
 from .controllers import dashboard, auth, voter, division, candidate, admin, settings, home, voting, grafik, akun
 from .views import health
+
+def admin_redirect(request):
+    """Redirect /adm/ to /adm/auth/login/"""
+    return redirect('/adm/auth/login/')
 
 urlpatterns = [
     # Health check endpoints
@@ -9,6 +14,9 @@ urlpatterns = [
     
     path('install-app/', auth.views_install, name='install'),
     path('install-app/install/', auth.install_handle, name='install-handle'),
+    
+    # Admin shortcuts
+    path('adm/', admin_redirect, name='admin-redirect'),
     path('adm/auth/login/', auth.views, name='login'),
     path('adm/auth/logout/', auth.logouts, name='logout'),
     
