@@ -11,7 +11,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="/media/{{ app.app_logo }}">
+    {% if app.app_logo_base64 %}
+        <link rel="shortcut icon" href="{{ app.app_logo_base64 }}">
+    {% elif app.app_logo %}
+        <link rel="shortcut icon" href="/media/{{ app.app_logo }}">
+    {% else %}
+        <link rel="shortcut icon" href="{% static 'assets/images/template-logo.jpg' %}">
+    {% endif %}
 
     <!-- App css -->
     <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
@@ -44,7 +50,15 @@
                                 <div class="col-md-12 p-5">
                                     <div class="mx-auto text-center mb-5">
                                         <a href="/">
-                                            <img src="/media/{{ app.app_logo }}/" alt="" height="24" />
+                                            {% if app.app_logo_base64 %}
+                                                <img src="{{ app.app_logo_base64 }}" alt="" height="24" 
+                                                     onerror="this.src='{% if app.app_logo %}/media/{{ app.app_logo }}/{% else %}{% static 'assets/images/template-logo.jpg' %}{% endif %}'"/>
+                                            {% elif app.app_logo %}
+                                                <img src="/media/{{ app.app_logo }}/" alt="" height="24" 
+                                                     onerror="this.src='{% static 'assets/images/template-logo.jpg' %}'"/>
+                                            {% else %}
+                                                <img src="{% static 'assets/images/template-logo.jpg' %}" alt="" height="24" />
+                                            {% endif %}
                                             <h3 class="d-inline align-middle ml-1 text-logo">{{ app.app_name }}</h3>
                                         </a>
                                     </div>
