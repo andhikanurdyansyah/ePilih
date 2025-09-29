@@ -88,6 +88,19 @@ WSGI_APPLICATION = 'evoting.wsgi.application'
 # Database configuration with Railway support using our custom parser
 print("=== Database Configuration Debug ===")
 
+# Debug Railway environment variables
+railway_env_vars = {
+    'DATABASE_URL': os.environ.get('DATABASE_URL', 'Not set'),
+    'PGHOST': os.environ.get('PGHOST', 'Not set'),
+    'PGDATABASE': os.environ.get('PGDATABASE', 'Not set'), 
+    'PGUSER': os.environ.get('PGUSER', 'Not set'),
+    'RAILWAY_ENVIRONMENT': os.environ.get('RAILWAY_ENVIRONMENT', 'Not set')
+}
+
+for key, value in railway_env_vars.items():
+    status = '✓' if value != 'Not set' else '✗'
+    print(f"{status} {key}: {value[:20]}{'...' if len(str(value)) > 20 else ''}")
+
 # Use our custom database configuration function
 db_config = get_database_config()
 DATABASES = {

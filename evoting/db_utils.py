@@ -49,18 +49,45 @@ def get_database_config():
     """
     database_url = os.environ.get('DATABASE_URL')
     
+    print(f"🔍 DATABASE_URL environment variable: {'✓ Found' if database_url else '✗ Not found'}")
+    
     if database_url:
         print("Using Railway DATABASE_URL")
         config = parse_database_url(database_url, conn_max_age=600, conn_health_checks=True)
         if config:
+            print(f"📊 Parsed Railway DB - Host: {config.get('HOST', 'unknown')}")
             return config
+        else:
+            print("⚠️ Failed to parse DATABASE_URL, falling back to environment variables")
     
-    # Fallback to environment variables
-    print("Using environment variables for database config")
+    # Fallback to environment variables - check for Railway-style variables first
+    railway_host = os.environ.get('PGHOST')
+    railway_db = os.environ.get('PGDATABASE')
+    railway_user = os.environ.get('PGUSER')
+    railway_password = os.environ.get('PGPASSWORD')
+    railway_port = os.environ.get('PGPORT')
+    
+    if railway_host and railway_db:
+        print("Using Railway PostgreSQL environment variables (PG*)")
+        return {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': railway_db,
+            'USER': railway_user or 'postgres',
+            'PASSWORD': railway_password or '',
+            'HOST': railway_host,
+            'PORT': railway_port or '5432',
+            'OPTIONS': {
+                'connect_timeout': 60,
+                'sslmode': 'prefer',
+            }
+        }
+    
+    # Final fallback to custom environment variables
+    print("Using custom environment variables for database config")
     return {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'epilih'),
-        'USER': os.environ.get('DB_USER', 'epilihuser'),
+        'USER': os.environ.get('DB_USER', 'epilihuser'),  
         'PASSWORD': os.environ.get('DB_PASS', 'epilihpass'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
