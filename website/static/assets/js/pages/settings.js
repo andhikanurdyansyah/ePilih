@@ -24,7 +24,15 @@ $(document).ready(function () {
         data.append("org", e.target.org.value)
         data.append("start", e.target.start.value)
         data.append("end", e.target.end.value)
-        data.append("foto", e.target.foto.files[0])
+        
+        // Get file input properly
+        const logoFile = document.getElementById('logo').files[0]
+        if (logoFile) {
+            data.append("foto", logoFile)
+            console.log("DEBUG - File appended:", logoFile.name, logoFile.size)
+        } else {
+            console.log("DEBUG - No file selected")
+        }
 
         if (data.get('name') && data.get('org')) {
             $('.btn-simpan').children('span.spinner-border').removeClass('d-none')
