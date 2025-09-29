@@ -4,13 +4,33 @@ $(document).ready(function () {
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "auto",
+        loop: true,
+        speed: 800,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+        },
         coverflowEffect: {
           rotate: 20,
           stretch: 0,
           depth: 100,
           modifier: 1,
           slideShadows: true
-        }
+        },
+        // Navigation arrows (optional)
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        // Pagination dots (optional)
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        // Smooth transitions
+        watchSlidesProgress: true,
+        watchSlidesVisibility: true,
     });
 
     $('.right-bar-toggle').on('click', function (e) {
