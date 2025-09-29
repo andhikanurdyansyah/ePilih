@@ -1,7 +1,12 @@
 from django.urls import path
 from .controllers import dashboard, auth, voter, division, candidate, admin, settings, home, voting, grafik, akun
+from .views import health
 
 urlpatterns = [
+    # Health check endpoints
+    path('health/', health.health_check, name='health-check'),
+    path('ping/', health.ping, name='ping'),
+    
     path('install-app/', auth.views_install, name='install'),
     path('install-app/install/', auth.install_handle, name='install-handle'),
     path('adm/auth/login/', auth.views, name='login'),
@@ -43,7 +48,8 @@ urlpatterns = [
     path('adm/settings/reset/', settings.reset, name='settings-reset'),
     
     # Voters UI
-    path('', home.views, name='home'),
+    path('', home.views_fallback, name='home'),
+    path('voting-home/', home.views, name='voting-home'),
     path('auth/login/', auth.voter_login, name='voter-login'),
     path('auth/logout/', auth.voter_logout, name='voter-logout'),
     
