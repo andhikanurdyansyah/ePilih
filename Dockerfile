@@ -30,8 +30,11 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy project files
 COPY . .
 
+# Create staticfiles directory
+RUN mkdir -p staticfiles
+
 # Expose port 
 EXPOSE $PORT
 
 # Jalankan migrate dan collectstatic saat container dijalankan
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn evoting.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn evoting.wsgi:application --host 0.0.0.0 --port ${PORT:-8000}"]
