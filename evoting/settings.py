@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
+import sys
+
+# Import our simple database URL parser
+from .db_utils import get_database_config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,48 +85,16 @@ WSGI_APPLICATION = 'evoting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# Database configuration - Railway Priority
-if 'DATABASE_URL' in os.environ:
-    # Railway PostgreSQL Database Configuration (Production)
-    DATABASES = {
-        'default': dj_database_url.parse(
-            os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-    print("Using Railway DATABASE_URL")
-elif not DEBUG:
-    # Production fallback - try prod.py first
-    try:
-        from .prod import DATABASES
-        print("Using prod.py database config")
-    except ImportError:
-        # Final fallback for production
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.environ.get('DB_NAME', 'epilih'),
-                'USER': os.environ.get('DB_USER', 'epilihuser'),
-                'PASSWORD': os.environ.get('DB_PASS', 'epilihpass'),
-                'HOST': os.environ.get('DB_HOST', 'localhost'),
-                'PORT': os.environ.get('DB_PORT', '5432'),
-            }
-        }
-        print("Using environment variables database config")
-else:
-    # Development database
-    try:
-        from .dev import DATABASES
-        print("Using dev.py database config")
-    except ImportError:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-        print("Using SQLite development database")
+# Database configuration with Railway support using our custom parser
+print("=== Database Configuration Debug ===")
+
+# Use our custom database configuration function
+DATABASES = get_database_config()
+
+print(f"Database ENGINE: {DATABASES['default']['ENGINE']}")
+print(f"Database NAME: {DATABASES['default']['NAME']}")
+print(f"Database HOST: {DATABASES['default']['HOST']}")
+print(f"=== End Database Configuration Debug ===")
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
