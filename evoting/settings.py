@@ -82,16 +82,38 @@ WSGI_APPLICATION = 'evoting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# Railway PostgreSQL Database Configuration
+# Database configuration
 if 'DATABASE_URL' in os.environ:
+    # Railway PostgreSQL Database Configuration
     DATABASES = {
         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
+elif DEBUG:
+    # Development database (dari dev.py)
+    try:
+        from .dev import DATABASES
+    except ImportError:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
-    if DEBUG:
-        from .dev import *
-    else:
-        from .prod import *
+    # Production database (dari prod.py)
+    try:
+        from .prod import DATABASES
+    except ImportError:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_NAME', 'epilih'),
+                'USER': os.environ.get('DB_USER', 'epilihuser'),
+                'PASSWORD': os.environ.get('DB_PASS', 'epilihpass'),
+                'HOST': os.environ.get('DB_HOST', 'localhost'),
+                'PORT': os.environ.get('DB_PORT', '5432'),
+            }
+        }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
